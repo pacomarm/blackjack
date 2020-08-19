@@ -1,24 +1,31 @@
 //Patrón módulo
-(() =>{ //función autoinvocada
+const myModule= (() =>{ //función autoinvocada
     'use strict';
 
-    let deck = [];
-    let suits= ['C', 'D', 'H', 'S']; 
-    let specials= ['A', 'J', 'Q', 'K'];
-    let pointsP= 0;
-    let pointsC= 0;
+    let deck = [],
+        suits= ['C', 'D', 'H', 'S'],
+        specials= ['A', 'J', 'Q', 'K'],
+        playersPoints= [];
 
     // HTML References
-    const bTake = document.querySelector('#bTake');
-    const bStop = document.querySelector('#bStop');
-    const bNew = document.querySelector('#bNew');
+    const bTake = document.querySelector('#bTake'),
+          bStop = document.querySelector('#bStop'),
+          bNew  = document.querySelector('#bNew');
 
-    const puntosHTML = document.querySelectorAll('small');
-    const divCardsP= document.querySelector('#jugador-cartas');
-    const divCardsC= document.querySelector('#cpu-cartas');
+    const puntosHTML = document.querySelectorAll('small'),
+          divCards   = document.querySelectorAll('.divCartas');
+
+    const beginGame = (numPlayers=2) => {
+        createDeck();
+        for(let i = 0; i < numPlayers; i++){
+            playersPoints.push(0);
+        }
+        console.log({playersPoints});
+    } 
 
     const createDeck = () => //creates deck
     {
+        deck=[];
         for(let i=2;i<11;i++){
             for(let suit of suits){
                 deck.push(i + suit);
@@ -31,13 +38,12 @@
             }
         }
 
-        deck= _.shuffle(deck);
-        return deck;
+        deck=_.shuffle(deck);
     }
 
     const ask4Card = () => {
-        if(deck.length<1)
-        {
+
+        if(deck.length<1){
             throw 'Error no cards bro';
         }
         return deck.pop();
@@ -47,20 +53,31 @@
         const val= card.substring(0, card.length-1);
 
         return (isNaN(val)) ? 
-                            (val == 'A') ? '11' : 10
-                            : val *1;
+            (val == 'A') ? '11' : 10
+            : val *1;
+    }
+
+    const setPoints = (card, turn) => {
+        playersPoints[turn]+= (getValue(card)*1);
+        puntosHTML[turn].innerText= playersPoints[turn];
+        // puntosHTML.forEach( elem => elem.innerText = 0);
+        return playersPoints[turn];
+    }
+
+    const createCard = (card, turn) => {
+        const imgCard= document.createElement('img');
+        imgCard.src= `cartas/${card}.png`;
+        imgCard.classList.add("carta");
+        divCards[turn].append(imgCard);
     }
 
     // CPU's Turn
     const cpuTurn = (minPoints) => {
+        let pointsC= 0;
         do{
             let card= ask4Card();
-            pointsC+= (getValue(card)*1);
-            puntosHTML[1].innerText= pointsC;
-            const imgCard= document.createElement('img');
-            imgCard.src= `cartas/${card}.png`;
-            imgCard.classList.add("carta");
-            divCardsC.append(imgCard);
+            pointsC = setPoints(card, playersPoints.length-1);
+            createCard(card, playersPoints.length-1);
         }while(  (pointsC < minPoints)  && (minPoints <= 21 ) );
 
         setTimeout(()=> {
@@ -70,6 +87,9 @@
     }
 
     const result = () => {
+
+        const [pointsP, pointsC] = playersPoints;
+
         (pointsP>21) ? alert('CPU won bro') :
             (pointsC>21) ? alert('U won bro') :
                 (pointsP==pointsC) ? alert('we tied bro') :
@@ -84,13 +104,10 @@
     bTake.addEventListener('click', () => {
 
         let card= ask4Card();
-        pointsP+= (getValue(card)*1);
-        puntosHTML[0].innerText= pointsP;
         
-        const imgCard= document.createElement('img');
-        imgCard.src= `cartas/${card}.png`;
-        imgCard.classList.add("carta");
-        divCardsP.append(imgCard);
+        const pointsP= setPoints(card,0);
+        
+        createCard(card, 0);
 
         if(pointsP > 21)
         {
@@ -107,7 +124,7 @@
     bStop.addEventListener('click', () => {
         bTake.disabled= true;
         bNew.disabled= true;
-        cpuTurn(pointsP);
+        cpuTurn(playersPoints[0]); // abstract
 
     });
 
@@ -115,8 +132,11 @@
         window.location.reload(); // recarga la página
     });
 
-    createDeck();
+    beginGame(2);
 
+    return {
+        //los objetos regresados aquí son públicos
+    };
 
 })();
 
