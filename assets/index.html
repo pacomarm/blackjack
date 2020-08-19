@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="title">Blackjack</header>
+
+    <div class="row mt-2">
+        <div id="divB" class="col text-center">
+            <button id="bNew" class= "btn btn-danger">New Game</button>
+            <button id="bTake" class= "btn btn-primary"> Take Card</button>
+            <button id="bStop" class= "btn btn-primary"> Stop</button>
+        </div>
+    </div>    
+    
+    <div class="row container">
+        <div class="col">
+
+            <h1 class= "player">Jugador 1- <small>0</small></h1>
+
+            <div id="jugador-cartas">
+                 
+                
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row container">
+        <div class="col">
+
+            <h1 class= "player">CPU- <small>0</small></h1>
+
+            <div id="cpu-cartas">
+                <!-- <img class="carta" src="cartas/3D.png" alt="carta"> -->
+                
+            </div>
+
+        </div>
+    </div>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
